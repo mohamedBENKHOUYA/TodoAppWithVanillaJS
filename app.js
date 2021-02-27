@@ -6,11 +6,11 @@ const filterOption = document.querySelector(".filter-todo");
 
 // console.log(todoList.children[0])
 
-let ar = [2, 3];
-let jso = JSON.stringify(ar);
-console.log(jso)
+let ar = '[2, 3]';
+// let jso = JSON.stringify(ar);
 
 // Event LIstenters
+document.addEventListener('DOMContentLoaded', start);
 todoButton.addEventListener('click', addTodo);
 todoList.addEventListener('click', deleteCheck);
 filterOption.addEventListener('click', filterTodo);
@@ -65,7 +65,8 @@ function deleteCheck(e) {
         todo.classList.add('fall');
         todo.addEventListener('transitionend', () => {
             todo.remove();
-        })
+        });
+        deleteFromStorage(todo);
     }
     // console.log(typeof e.target.classList)
 
@@ -112,4 +113,49 @@ function saveLocalTodos(todo) {
 
     todos.push(todo);
     localStorage.setItem('todos', JSON.stringify(todos)); 
+} 
+
+function deleteFromStorage(todo) {
+    let todos;
+    if(localStorage.getItem('todos') === null) {
+        todos = [];
+    }else {
+        todos = JSON.parse(localStorage.getItem('todos'));
+    }
+
+    todos = todos.filter((str) => todo.children[0].innerText === str);
+    localStorage.setItem('todos', JSON.stringify(todos));
+    console.log('child : ',todo.children[0].innerText)
+
+}
+
+function start() {
+    let todos;
+    if(localStorage.getItem('todos') === null) {
+        todos = [];
+    }else {
+        todos = JSON.parse(localStorage.getItem('todos'));
+    }
+
+    todos.map((value) => {
+        let div = document.createElement('div');
+        div.classList.add('todo');
+        let li = document.createElement('li');
+        li.classList.add('todo-item');
+        li.innerText = value;
+        let actions = document.createElement('div');
+        actions.classList.add('actions');
+        let trash = document.createElement('button');
+        trash.classList.add('trash-btn');
+        trash.innerHTML = `<i class="fas fa-trash"></i>`;
+        let complete = document.createElement('button');
+        complete.classList.add('complete-btn');
+        complete.innerHTML = `<i class="fas fa-check"></i>`;
+
+        actions.appendChild(complete);
+        actions.appendChild(trash);
+        div.appendChild(li);
+        div.appendChild(actions);
+        todoList.appendChild(div);
+    })
 }
